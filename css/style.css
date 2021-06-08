@@ -1,10 +1,12 @@
 body {
     margin: 0;
     font-family: rubik, sans-serif;
+    height: 100vh;
+    overflow: hidden;
 }
 
 .main-container {
-    height: 100vh;
+    height: 100%;
     display: flex;
     flex-direction: column;
     justify-content: start;
@@ -53,15 +55,21 @@ canvas {
     src: url('/fonts/Rubik-Medium.ttf');
 }
 
-/* Media */
+/******************* Media *******************/
 
+/* Tablet */
 @media (max-width: 715px) {
     html {
         font-size: 10px;
     }
 }
+
+/* Mobile */
 @media (max-width: 560px) {
     html {
         font-size: 8px;
+    }
+    body {
+        height: 85vh;
     }
 }

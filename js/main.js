@@ -15,6 +15,9 @@ function addListeners() {
 
     var elCanvas = document.querySelector('canvas');
 
+    // if (gTouchEvs.includes(ev.type)) {
+    //     ev.preventDefault();
+    // }
     // Pan on
     var hammerTime = new Hammer(elCanvas);
     hammerTime.on('panstart', function (ev) {
@@ -35,6 +38,20 @@ function addListeners() {
             y,
         };
 
+        // Stop the free style
+        if (gCurrShape === 'free-style-flow') {
+            gFreeStylePath.push({ x, y });
+            draw();
+
+            gAllObjectOnCanvas.push({
+                shape: 'free-style-flow',
+                innerData: [gFreeStylePath],
+            });
+
+            gFreeStylePath = [];
+            return;
+        }
+
         if (gCurrShape === 'text') return;
         draw();
     });
@@ -47,6 +64,27 @@ function addListeners() {
             x,
             y,
         };
+
+        if (gCurrShape === 'text') draw();
+    });
+
+    // Pan move
+    hammerTime.on('panmove', function (ev) {
+        if (gCurrShape !== 'free-style-flow') return;
+
+        let x = ev.changedPointers[0].offsetX;
+        let y = ev.changedPointers[0].offsetY;
+        gCurrentClickPos = {
+            x,
+            y,
+        };
+
+        // Taking care of free style draw
+        if (gCurrShape === 'free-style-flow') {
+            gFreeStylePath.push({ x, y });
+            draw();
+            return;
+        }
 
         if (gCurrShape === 'text') draw();
     });

@@ -2,6 +2,8 @@
 
 var gAllObjectOnCanvas;
 
+const gTouchEvs = ['touchstart', 'touchmove', 'touchend'];
+
 var gCurrShape;
 var gCurrentColor;
 var gCurrentBgColor;
@@ -10,6 +12,8 @@ var gTouchStartPos, gTouchEndPos;
 var gCurrentClickPos;
 
 var gStringToPrint;
+
+var gFreeStylePath;
 
 function initCanvasService() {
     resizeCanvas();
@@ -23,6 +27,8 @@ function initCanvasService() {
     gTouchStartPos = null;
     gTouchEndPos = null;
     gCurrentClickPos = 0;
+
+    gFreeStylePath = [];
 
     gStringToPrint = '';
 }
@@ -76,9 +82,9 @@ function drawImg3() {
     };
 }
 
-function drawLine(x, y, xEnd = 250, yEnd = 250) {
+function drawLine(x, y, xEnd = 250, yEnd = 250, width = 2) {
     gCtx.beginPath();
-    gCtx.lineWidth = 2;
+    gCtx.lineWidth = width;
     gCtx.moveTo(x, y);
     gCtx.lineTo(xEnd, yEnd);
     gCtx.closePath();
@@ -125,6 +131,12 @@ function drawText(text, pos) {
     gCtx.font = '40px Arial';
     gCtx.fillText(text, pos.x, pos.y);
     gCtx.strokeText(text, pos.x, pos.y);
+}
+
+function drawFreeStyle(allPoints) {
+    allPoints.forEach((point) => {
+        drawLine(point.x, point.y, point.x + 1, point.y + 1, 10);
+    });
 }
 
 function clearCanvas() {
@@ -202,6 +214,10 @@ function draw() {
             break;
 
         // Flow brushes ----------------------
+
+        case 'free-style-flow':
+            drawFreeStyle(gFreeStylePath);
+            break;
 
         case 'rect-flow':
             drawText(gStringToPrint, gCurrentClickPos);

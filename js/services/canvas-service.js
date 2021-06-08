@@ -15,6 +15,8 @@ var gStringToPrint;
 
 var gFreeStylePath;
 
+var gDensity;
+
 function initCanvasService() {
     resizeCanvas();
 
@@ -27,6 +29,7 @@ function initCanvasService() {
     gTouchStartPos = null;
     gTouchEndPos = null;
     gCurrentClickPos = 0;
+    gDensity = 2;
 
     gFreeStylePath = [];
 
@@ -46,6 +49,10 @@ function setColor(color) {
 
 function setBgColor(color) {
     gCurrentBgColor = color.value;
+}
+
+function setDensity(newD) {
+    gDensity = newD;
 }
 
 function downloadCanvas(elLink) {
@@ -82,7 +89,7 @@ function drawImg3() {
     };
 }
 
-function drawLine(x, y, xEnd = 250, yEnd = 250, width = 2) {
+function drawLine(x, y, xEnd = 250, yEnd = 250, width = gDensity) {
     gCtx.beginPath();
     gCtx.lineWidth = width;
     gCtx.moveTo(x, y);
@@ -94,7 +101,7 @@ function drawLine(x, y, xEnd = 250, yEnd = 250, width = 2) {
 
 function drawTriangle(firstPoint, x, y, xEnd = 250, yEnd = 250) {
     gCtx.beginPath();
-    gCtx.lineWidth = 2;
+    gCtx.lineWidth = gDensity;
     gCtx.moveTo(firstPoint.x, firstPoint.y);
     gCtx.lineTo(x, y);
     gCtx.lineTo(xEnd, yEnd);
@@ -116,10 +123,10 @@ function drawRect(x, y, xEnd = 150, yEnd = 150) {
     gCtx.stroke();
 }
 
-function drawArc(x, y) {
+function drawArc(x, y, r) {
     gCtx.beginPath();
-    gCtx.lineWidth = 6;
-    gCtx.arc(x, y, 100, 0, 2 * Math.PI);
+    gCtx.lineWidth = 3;
+    gCtx.arc(x, y, r, 0, 2 * Math.PI);
     gCtx.strokeStyle = gCurrentColor;
     gCtx.stroke();
     gCtx.fillStyle = gCurrentBgColor;
@@ -127,7 +134,7 @@ function drawArc(x, y) {
 }
 
 function drawText(text, pos) {
-    gCtx.lineWidth = 2;
+    gCtx.lineWidth = gDensity;
     gCtx.font = '40px Arial';
     gCtx.fillText(text, pos.x, pos.y);
     gCtx.strokeText(text, pos.x, pos.y);
@@ -135,13 +142,18 @@ function drawText(text, pos) {
 
 function drawFreeStyle(allPoints) {
     allPoints.forEach((point) => {
-        drawLine(point.x, point.y, point.x + 1, point.y + 1, 10);
+        drawLine(point.x, point.y, point.x + 1, point.y + 1, gDensity);
     });
 }
 
 function drawFreeStyleRec(allPoints) {
     allPoints.forEach((point) => {
-        drawRect(point.x, point.y, point.x + 20, point.y + 20);
+        drawRect(
+            point.x,
+            point.y,
+            point.x + gDensity * 7,
+            point.y + gDensity * 7,
+        );
     });
 }
 
@@ -151,7 +163,7 @@ function drawFreeStyleIntegraRec(allPoints) {
             drawRect(point.x, point.y, point.x + 20, point.y + 20);
             return;
         }
-        if (idx % 9 !== 0) {
+        if (idx % gDensity !== 0) {
             return;
         }
 
@@ -167,6 +179,28 @@ function drawFreeStyleIntegraRec(allPoints) {
             point.x + currentWidth,
             point.y + currentHeight,
         );
+    });
+}
+
+function drawFreeStyleIntegraCircle(allPoints) {
+    allPoints.forEach((point, idx) => {
+        if (!idx) {
+            drawArc(point.x, point.y, 20);
+            return;
+        }
+        if (idx % gDensity !== 0) {
+            return;
+        }
+
+        let prevX = allPoints[idx - 1].x;
+        let prevY = allPoints[idx - 1].y;
+
+        let currentWidth = (point.x - prevX) * 10;
+        let currentHeight = (point.y - prevY) * 10;
+        let radius = (currentHeight + currentWidth) / 2;
+        radius = Math.abs(radius);
+
+        drawArc(point.x, point.y, radius);
     });
 }
 
@@ -257,6 +291,13 @@ function draw() {
 
         case 'integrative-rect-flow':
             drawFreeStyleIntegraRec(gFreeStylePath);
+            break;
+        case 'integrative-rect-flow':
+            drawFreeStyleIntegraRec(gFreeStylePath);
+            break;
+
+        case 'integrative-circle-flow':
+            drawFreeStyleIntegraCircle(gFreeStylePath);
             break;
     }
 }

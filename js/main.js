@@ -31,8 +31,6 @@ function addListeners() {
 
     // Pan move
     hammerTime.on('panmove', function (ev) {
-        if (gCurrShape.includes('free-style-flow')) return;
-
         let x = ev.changedPointers[0].offsetX;
         let y = ev.changedPointers[0].offsetY;
 
@@ -92,4 +90,13 @@ function resizeCanvas() {
     // Note: changing the canvas dimension this way clears the canvas
     gCanvas.width = elContainer.offsetWidth;
     gCanvas.height = elContainer.offsetHeight;
+}
+
+function onSetDensity(el) {
+    let val = el.value;
+
+    var elSpan = document.querySelector('.density-range-scale');
+    elSpan.innerText = val;
+
+    setDensity(val);
 }

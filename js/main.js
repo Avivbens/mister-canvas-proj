@@ -29,6 +29,23 @@ function addListeners() {
         };
     });
 
+    // Pan move
+    hammerTime.on('panmove', function (ev) {
+        if (gCurrShape.includes('free-style-flow')) return;
+
+        let x = ev.changedPointers[0].offsetX;
+        let y = ev.changedPointers[0].offsetY;
+
+        // Taking care of free style draw
+        if (gCurrShape.includes('flow')) {
+            gFreeStylePath.push({ x, y });
+            draw();
+            return;
+        }
+
+        if (gCurrShape === 'text') draw();
+    });
+
     // Pan off
     hammerTime.on('panend', function (ev) {
         let x = ev.changedPointers[0].offsetX;
@@ -39,12 +56,12 @@ function addListeners() {
         };
 
         // Stop the free style
-        if (gCurrShape === 'free-style-flow') {
+        if (gCurrShape.includes('flow')) {
             gFreeStylePath.push({ x, y });
             draw();
 
             gAllObjectOnCanvas.push({
-                shape: 'free-style-flow',
+                shape: gCurrShape,
                 innerData: [gFreeStylePath],
             });
 
@@ -64,27 +81,6 @@ function addListeners() {
             x,
             y,
         };
-
-        if (gCurrShape === 'text') draw();
-    });
-
-    // Pan move
-    hammerTime.on('panmove', function (ev) {
-        if (gCurrShape !== 'free-style-flow') return;
-
-        let x = ev.changedPointers[0].offsetX;
-        let y = ev.changedPointers[0].offsetY;
-        gCurrentClickPos = {
-            x,
-            y,
-        };
-
-        // Taking care of free style draw
-        if (gCurrShape === 'free-style-flow') {
-            gFreeStylePath.push({ x, y });
-            draw();
-            return;
-        }
 
         if (gCurrShape === 'text') draw();
     });

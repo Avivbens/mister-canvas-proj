@@ -139,6 +139,37 @@ function drawFreeStyle(allPoints) {
     });
 }
 
+function drawFreeStyleRec(allPoints) {
+    allPoints.forEach((point) => {
+        drawRect(point.x, point.y, point.x + 20, point.y + 20);
+    });
+}
+
+function drawFreeStyleIntegraRec(allPoints) {
+    allPoints.forEach((point, idx) => {
+        if (!idx) {
+            drawRect(point.x, point.y, point.x + 20, point.y + 20);
+            return;
+        }
+        if (idx % 9 !== 0) {
+            return;
+        }
+
+        let prevX = allPoints[idx - 1].x;
+        let prevY = allPoints[idx - 1].y;
+
+        let currentWidth = (point.x - prevX) * 10;
+        let currentHeight = (point.y - prevY) * 10;
+
+        drawRect(
+            point.x,
+            point.y,
+            point.x + currentWidth,
+            point.y + currentHeight,
+        );
+    });
+}
+
 function clearCanvas() {
     gCtx.clearRect(0, 0, gCanvas.width, gCanvas.height);
 }
@@ -165,6 +196,7 @@ function draw() {
             break;
 
         case 'triangle':
+            console.log('in');
             drawTriangle(
                 gCurrentClickPos,
                 gTouchStartPos.x,
@@ -220,12 +252,11 @@ function draw() {
             break;
 
         case 'rect-flow':
-            drawText(gStringToPrint, gCurrentClickPos);
+            drawFreeStyleRec(gFreeStylePath);
+            break;
 
-            gAllObjectOnCanvas.push({
-                shape: 'text',
-                innerData: [gStringToPrint],
-            });
+        case 'integrative-rect-flow':
+            drawFreeStyleIntegraRec(gFreeStylePath);
             break;
     }
 }

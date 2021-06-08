@@ -18,24 +18,41 @@
     <div class="main-container">
 
         <section class="selection-area">
-            color:
-            <input onchange="setColor(this)" type="color"> |
-            background-color:
-            <input onchange="setBgColor(this)" type="color"> |
+            <div class="main-prop">
+                color:
+                <input onchange="setColor(this)" type="color"> |
+                background-color:
+                <input onchange="setBgColor(this)" type="color"> |
 
-            <select onchange="setShape(this)" class="brush-selector">
-                <option value="" class="brush-option header-option" disabled>--- Solid Shapes ---</option>
-                <option value="line" class="brush-option line" selected>Line</option>
-                <option value="triangle" class="brush-option triangle">Triangle</option>
-                <option value="rect" class="brush-option rect">Rect</option>
-                <option value="text" class="brush-option text">Text</option>
-                <option value="" class="brush-option header-option" disabled>--- Flow Brushes ---</option>
-                <option value="free-style-flow" class="brush-option free-style-flow">FreeStyle - flow</option>
-                <option value="rect-flow" class="brush-option rect-flow">Rect - flow</option>
-            </select>
+                <select onchange="setShape(this)" class="brush-selector">
+                    <!--  -->
+                    <option value="" class="brush-option header-option" disabled>--- Solid Shapes ---</option>
+                    <!--  -->
+                    <option value="line" class="brush-option line" selected>Line</option>
+                    <option value="triangle" class="brush-option triangle">Triangle</option>
+                    <option value="rect" class="brush-option rect">Rect</option>
+                    <option value="text" class="brush-option text">Text</option>
+                    <!--  -->
+                    <option value="" class="brush-option header-option" disabled>--- Flow Brushes ---</option>
+                    <!--  -->
+                    <option value="free-style-flow" class="brush-option free-style-flow">FreeStyle - flow</option>
+                    <option value="rect-flow" class="brush-option rect-flow">Rect - flow</option>
+                    <option value="integrative-rect-flow" class="brush-option integrative-rect-flow">Integrative Rect -
+                        flow
+                    </option>
 
-            <button onclick="clearCanvas()">Clear</button>
-            <a href="#" onclick="downloadCanvas(this)" download="file-name">Download</a>
+                </select>
+
+                <button onclick="clearCanvas()">Clear</button>
+                <a href="#" onclick="downloadCanvas(this)" download="file-name">Download</a>
+
+            </div>
+
+            <!-- Density -->
+            <aside class="sec-properties-area">
+                <input type="range" class="density-input input">
+            </aside>
+
         </section>
 
 

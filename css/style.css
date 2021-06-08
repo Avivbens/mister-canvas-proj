@@ -18,7 +18,7 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    flex-flow: wrap;
+    flex-direction: column;
     background-color: lightgray;
     border-radius: 0 0 10px 10px;
     padding: 5px;
@@ -27,8 +27,16 @@ body {
     text-transform: uppercase;
 }
 
-.selection-area > *:not(input) {
-    /* margin: 0 10px; */
+.main-prop,
+.sec-properties-area {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.main-prop > *:not(input) {
+    margin: 10px;
     padding: 8px;
 }
 

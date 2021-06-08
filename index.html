@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>proj canvas</title>
+
+
+
+    <link rel="stylesheet" href="css/basic-style.css">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body onload="init()">
+
+    <div class="main-container">
+
+        <section class="selection-area">
+            color:
+            <input onchange="setColor(this)" type="color"> |
+            background-color:
+            <input onchange="setBgColor(this)" type="color"> |
+
+            <select onchange="setShape(this)" class="brush-selector">
+                <option value="line" class="brush-option line" selected>Line</option>
+                <option value="triangle" class="brush-option triangle">Triangle</option>
+                <option value="rect" class="brush-option rect">Rect</option>
+                <option value="text" class="brush-option text">Text</option>
+            </select>
+
+            <button onclick="clearCanvas()">Clear</button>
+            <a href="#" onclick="downloadCanvas(this)" download="file-name">Download</a>
+        </section>
+
+
+        <main class="canvas-container">
+            <canvas id="my-canvas" height="500" width="800"></canvas>
+        </main>
+
+    </div>
+
+
+
+    <script src="js/lib/hammer.min.js" async></script>
+    <script src="js/services/upload-service.js"></script>
+    <script src="js/main.js"></script>
+</body>
+
+</html>

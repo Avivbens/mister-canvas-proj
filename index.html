@@ -24,10 +24,13 @@
             <input onchange="setBgColor(this)" type="color"> |
 
             <select onchange="setShape(this)" class="brush-selector">
+                <option value="" class="brush-option header-option" disabled>--- Solid Shapes ---</option>
                 <option value="line" class="brush-option line" selected>Line</option>
                 <option value="triangle" class="brush-option triangle">Triangle</option>
                 <option value="rect" class="brush-option rect">Rect</option>
                 <option value="text" class="brush-option text">Text</option>
+                <option value="" class="brush-option header-option" disabled>--- Flow Brushes ---</option>
+                <option value="rect" class="brush-option rect">Rect</option>
             </select>
 
             <button onclick="clearCanvas()">Clear</button>

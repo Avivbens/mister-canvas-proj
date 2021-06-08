@@ -3,16 +3,24 @@
 var gCanvas;
 var gCtx;
 
+var gAllObjectOnCanvas;
+
 var gCurrShape;
 var gCurrentColor;
 var gCurrentBgColor;
 
 var gTouchStartPos, gTouchEndPos;
+var gCurrentClickPos;
+
+var gStringToPrint;
 
 function init() {
     gCanvas = document.getElementById('my-canvas');
     gCtx = gCanvas.getContext('2d');
     addListeners();
+    resizeCanvas();
+
+    gAllObjectOnCanvas = [];
 
     gCurrShape = 'line';
     gCurrentColor = '#000';
@@ -20,12 +28,9 @@ function init() {
 
     gTouchStartPos = null;
     gTouchEndPos = null;
+    gCurrentClickPos = 0;
 
-    // window.addEventListener('resize', function(){
-    //     gCanvas.width = window.innerWidth
-    //     gCanvas.height = window.innerHeight
-    //     resizeCanvas()
-    // });
+    gStringToPrint = '';
 }
 
 function addListeners() {
@@ -33,6 +38,7 @@ function addListeners() {
 
     var elCanvas = document.querySelector('canvas');
 
+    // Pan on
     var hammerTime = new Hammer(elCanvas);
     hammerTime.on('panstart', function (ev) {
         let x = ev.changedPointers[0].offsetX;
@@ -43,6 +49,7 @@ function addListeners() {
         };
     });
 
+    // Pan off
     hammerTime.on('panend', function (ev) {
         let x = ev.changedPointers[0].offsetX;
         let y = ev.changedPointers[0].offsetY;
@@ -51,7 +58,20 @@ function addListeners() {
             y,
         };
 
+        if (gCurrShape === 'text') return;
         draw();
+    });
+
+    // Single tap
+    hammerTime.on('tap', function (ev) {
+        let x = ev.changedPointers[0].offsetX;
+        let y = ev.changedPointers[0].offsetY;
+        gCurrentClickPos = {
+            x,
+            y,
+        };
+
+        if (gCurrShape === 'text') draw();
     });
 }
 
@@ -65,12 +85,12 @@ function drawLine(x, y, xEnd = 250, yEnd = 250) {
     gCtx.stroke();
 }
 
-function drawTriangle(x, y, xEnd = 250, yEnd = 250) {
+function drawTriangle(firstPoint, x, y, xEnd = 250, yEnd = 250) {
     gCtx.beginPath();
     gCtx.lineWidth = 2;
-    gCtx.moveTo(x, y);
-    gCtx.lineTo(20, 100);
-    gCtx.lineTo(50, 220);
+    gCtx.moveTo(firstPoint.x, firstPoint.y);
+    gCtx.lineTo(x, y);
+    gCtx.lineTo(xEnd, yEnd);
     gCtx.closePath();
     // gCtx.lineTo(x, y);
 
@@ -99,11 +119,11 @@ function drawArc(x, y) {
     gCtx.fill();
 }
 
-function drawText(text, x, y) {
+function drawText(text, pos) {
     gCtx.lineWidth = 2;
     gCtx.font = '40px Arial';
-    gCtx.fillText(text, x, y);
-    gCtx.strokeText(text, x, y);
+    gCtx.fillText(text, pos.x, pos.y);
+    gCtx.strokeText(text, pos.x, pos.y);
 }
 
 function saveAndRestoreExample() {
@@ -164,6 +184,8 @@ function resizeCanvas() {
 function setShape(option) {
     var shape = option.value;
     gCurrShape = shape;
+
+    if (shape === 'text') setStringToPrint(prompt('What to print?'));
 }
 
 function setColor(color) {
@@ -174,10 +196,12 @@ function setBgColor(color) {
     gCurrentBgColor = color.value;
 }
 
-function draw(ev) {
-    // const offsetX = ev.offsetX;
-    // const offsetY = ev.offsetY;
+function setStringToPrint(str) {
+    gStringToPrint = '';
+    if (str) gStringToPrint = str;
+}
 
+function draw() {
     switch (gCurrShape) {
         case 'line':
             drawLine(
@@ -186,10 +210,39 @@ function draw(ev) {
                 gTouchEndPos.x,
                 gTouchEndPos.y,
             );
+
+            gAllObjectOnCanvas.push({
+                shape: 'line',
+                innerData: [
+                    gTouchStartPos.x,
+                    gTouchStartPos.y,
+                    gTouchEndPos.x,
+                    gTouchEndPos.y,
+                ],
+            });
             break;
+
         case 'triangle':
-            drawTriangle(offsetX, offsetY);
+            drawTriangle(
+                gCurrentClickPos,
+                gTouchStartPos.x,
+                gTouchStartPos.y,
+                gTouchEndPos.x,
+                gTouchEndPos.y,
+            );
+
+            gAllObjectOnCanvas.push({
+                shape: 'triangle',
+                innerData: [
+                    gCurrentClickPos,
+                    gTouchStartPos.x,
+                    gTouchStartPos.y,
+                    gTouchEndPos.x,
+                    gTouchEndPos.y,
+                ],
+            });
             break;
+
         case 'rect':
             drawRect(
                 gTouchStartPos.x,
@@ -197,9 +250,25 @@ function draw(ev) {
                 gTouchEndPos.x,
                 gTouchEndPos.y,
             );
+
+            gAllObjectOnCanvas.push({
+                shape: 'rect',
+                innerData: [
+                    gTouchStartPos.x,
+                    gTouchStartPos.y,
+                    gTouchEndPos.x,
+                    gTouchEndPos.y,
+                ],
+            });
             break;
+
         case 'text':
-            drawText('Puki', offsetX, offsetY);
+            drawText(gStringToPrint, gCurrentClickPos);
+
+            gAllObjectOnCanvas.push({
+                shape: 'text',
+                innerData: [gStringToPrint],
+            });
             break;
     }
 }
